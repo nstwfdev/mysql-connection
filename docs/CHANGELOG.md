@@ -1,3 +1,10 @@
+## [1.1.1](https://github.com/nstwfdev/mysql-connection/compare/v1.1.0...v1.1.1) (2022-12-20)
+
+
+### Fix
+
+* semantic-release composer plugin, add composer json to git plugin assets ([08538fe](https://github.com/nstwfdev/mysql-connection/commit/08538feef2f64638f47679f362ae43d20f9b4bef))
+
 # [1.1.0](https://github.com/nstwfdev/mysql-connection/compare/v1.0.0...v1.1.0) (2022-12-20)
 
 
