@@ -50,6 +50,7 @@
       {
         "message": "Chore (release): ${nextRelease.version}\n\n${nextRelease.notes}",
         "assets": [
+          "composer.json",
           "docs/CHANGELOG.md"
         ]
       }
