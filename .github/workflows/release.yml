@@ -30,6 +30,7 @@ jobs:
             @semantic-release/changelog@6.0.2
             @semantic-release/git@10.0.1
             conventional-changelog-eslint@3.0.9
+            @iwavesmedia/semantic-release-composer@1.0.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GIT_AUTHOR_NAME: ${{ github.repository_owner }}

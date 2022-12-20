@@ -40,6 +40,12 @@
       }
     ],
     [
+      "@iwavesmedia/semantic-release-composer",
+      {
+        "skipOnMissingComposerJson": true
+      }
+    ],
+    [
       "@semantic-release/git",
       {
         "message": "Chore (release): ${nextRelease.version}\n\n${nextRelease.notes}",
