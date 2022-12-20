@@ -1,0 +1,15 @@
+version: 2
+updates:
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    commit-message:
+      prefix: "Upgrade"
+
+  - package-ecosystem: "composer"
+    directory: "/"
+    commit-message:
+      prefix: "Upgrade"
+    schedule:
+      interval: "daily"
