@@ -1,3 +1,10 @@
+## [1.1.2](https://github.com/nstwfdev/mysql-connection/compare/v1.1.1...v1.1.2) (2022-12-20)
+
+
+### Fix
+
+* phpunit to require-dev ([0b87134](https://github.com/nstwfdev/mysql-connection/commit/0b8713428353fa93da951defadd37cfa87f998c3))
+
 ## [1.1.1](https://github.com/nstwfdev/mysql-connection/compare/v1.1.0...v1.1.1) (2022-12-20)
 
 
