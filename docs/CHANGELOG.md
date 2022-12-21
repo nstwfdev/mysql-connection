@@ -1,3 +1,14 @@
+# [1.2.0](https://github.com/nstwfdev/mysql-connection/compare/v1.1.2...v1.2.0) (2022-12-21)
+
+
+### Build
+
+* replace php-actions/phpunit action with plain vendor/bin/phpunit call ([a5114de](https://github.com/nstwfdev/mysql-connection/commit/a5114de55e6231d01a92e78bc993d9f947602421))
+
+### New
+
+* Create ConnectionFactoryInterface for future tests ([c628329](https://github.com/nstwfdev/mysql-connection/commit/c628329f026c48bc197acfd40d51cde6dba453c4))
+
 ## [1.1.2](https://github.com/nstwfdev/mysql-connection/compare/v1.1.1...v1.1.2) (2022-12-20)
 
 
