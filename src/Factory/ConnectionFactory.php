@@ -12,7 +12,7 @@ use Nstwf\MysqlConnection\ConnectionInterface;
 use React\MySQL\Factory;
 
 
-final class ConnectionFactory
+final class ConnectionFactory implements ConnectionFactoryInterface
 {
     public function __construct(
         private Factory $factory
