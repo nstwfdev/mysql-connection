@@ -23,27 +23,11 @@ jobs:
           php-version: ${{ matrix.php-versions }}
           coverage: xdebug
 
-      - run: composer install
+      - run: composer install --no-progress --prefer-dist --optimize-autoloader
 
-      - name: PHPUnit Tests coverage text
-        uses: php-actions/phpunit@v9
-        env:
-          XDEBUG_MODE: coverage
-        with:
-          bootstrap: vendor/autoload.php
-          configuration: phpunit.xml
-          php_extensions: xdebug
-          args: tests --coverage-text
+      - run: php vendor/bin/phpunit --configuration phpunit.xml --coverage-text
 
-      - name: PHPUnit Tests  coverage clover
-        uses: php-actions/phpunit@v9
-        env:
-          XDEBUG_MODE: coverage
-        with:
-          bootstrap: vendor/autoload.php
-          configuration: phpunit.xml
-          php_extensions: xdebug
-          args: tests --coverage-clover ./coverage.xml
+      - run: php vendor/bin/phpunit --configuration phpunit.xml --coverage-clover ./coverage.xml
 
       - name: Upload to Codecov
         uses: codecov/codecov-action@v3
