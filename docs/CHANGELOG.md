@@ -1,3 +1,24 @@
+## [1.2.1](https://github.com/nstwfdev/mysql-connection/compare/v1.2.0...v1.2.1) (2022-12-22)
+
+
+### Build
+
+* rename ci.yml workflow name ([daee02e](https://github.com/nstwfdev/mysql-connection/commit/daee02ef6ce0e1eda48f5b7e91a2ed1b448130ca))
+
+### Chore
+
+* add autoload-dev ([1c331f5](https://github.com/nstwfdev/mysql-connection/commit/1c331f54eeeaca8dc624a903d2d6175290674105))
+* add LICENSE file ([ee92cc5](https://github.com/nstwfdev/mysql-connection/commit/ee92cc5913e19f0364ce6a455921a239d6fb6c69))
+
+### Docs
+
+* add badges to README.MD ([0584877](https://github.com/nstwfdev/mysql-connection/commit/058487759b1c8f0510e1bf571c227412308496e5))
+* Update readme, add install/tests/license sections ([0015850](https://github.com/nstwfdev/mysql-connection/commit/00158509a2899d574fd36a95b6eaf00da37e160c))
+
+### Fix
+
+* Default reactphp-factory initialization in factory wrapper ([c7e0554](https://github.com/nstwfdev/mysql-connection/commit/c7e05543ae596eb3b349f7257878efe07ef69d2a))
+
 # [1.2.0](https://github.com/nstwfdev/mysql-connection/compare/v1.1.2...v1.2.0) (2022-12-21)
 
 
