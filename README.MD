@@ -4,7 +4,7 @@
 [![codecov](https://codecov.io/gh/nstwfdev/mysql-connection/branch/master/graph/badge.svg?token=9YL9FSM4RV)](https://codecov.io/gh/nstwfdev/mysql-connection)
 [![Packagist Version](https://img.shields.io/packagist/v/nstwf/mysql-connection?logo=packagist)](https://packagist.org/packages/nstwf/mysql-connection)
 
-Simple wrapper of [connection](https://github.com/friends-of-reactphp/mysql) that allows you to make transactions easier
+Simple wrapper of [`ConnectionInterface`](https://github.com/friends-of-reactphp/mysql) that allows you to make transactions easier
 
 > Read [main documentation](https://github.com/friends-of-reactphp/mysql) before
 
@@ -23,6 +23,9 @@ Simple wrapper of [connection](https://github.com/friends-of-reactphp/mysql) tha
         * [ping()](#ping)
         * [quit()](#quit)
         * [close()](#close)
+* [Install](#install)
+* [Tests](#tests)
+* [License](#license)
 
 ## Quickstart example
 
@@ -179,3 +182,38 @@ $connection->query("ROLLBACK");
 #### quit
 
 [See original documentation](https://github.com/friends-of-reactphp/mysql#quit)
+
+## Install
+
+The recommended way to install this library is [through Composer](https://getcomposer.org).
+[New to Composer?](https://getcomposer.org/doc/00-intro.md)
+
+This project follows [SemVer](https://semver.org/).
+This will install the latest supported version:
+
+```bash
+composer require nstwf/mysql-connection
+```
+
+See also the [CHANGELOG](docs/CHANGELOG.md) for details about version upgrades.
+
+It's *highly recommended to use PHP 8+* * for this project.
+
+## Tests
+
+To run the test suite, you first need to clone this repo and then install all
+dependencies [through Composer](https://getcomposer.org):
+
+```bash
+composer install
+```
+
+To run the test suite, go to the project root and run:
+
+```bash
+vendor/bin/phpunit
+```
+
+## License
+
+MIT, see [LICENSE file](LICENSE).
