@@ -15,7 +15,7 @@ use React\MySQL\Factory;
 final class ConnectionFactory implements ConnectionFactoryInterface
 {
     public function __construct(
-        private Factory $factory
+        private Factory $factory = new Factory()
     ) {
     }
 
