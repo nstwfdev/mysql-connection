@@ -1,5 +1,9 @@
 # Reactphp MySQL transactional connection
 
+[![CI](https://img.shields.io/github/actions/workflow/status/nstwfdev/mysql-connection/ci.yml?branch=master&label=ci&logo=github)](https://github.com/nstwfdev/mysql-connection/actions?query=workflow%3Aci+branch%3Amaster)
+[![codecov](https://codecov.io/gh/nstwfdev/mysql-connection/branch/master/graph/badge.svg?token=9YL9FSM4RV)](https://codecov.io/gh/nstwfdev/mysql-connection)
+[![Packagist Version](https://img.shields.io/packagist/v/nstwf/mysql-connection?logo=packagist)](https://packagist.org/packages/nstwf/mysql-connection)
+
 Simple wrapper of [connection](https://github.com/friends-of-reactphp/mysql) that allows you to make transactions easier
 
 > Read [main documentation](https://github.com/friends-of-reactphp/mysql) before
