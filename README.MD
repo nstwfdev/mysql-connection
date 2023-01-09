@@ -30,7 +30,7 @@ Simple wrapper of [`ConnectionInterface`](https://github.com/friends-of-reactphp
 ## Quickstart example
 
 ```php
-$factory = new Nstwf\MysqlConnection\Factory\ConnectionFactory(new React\MySQL\Factory());
+$factory = new \Nstwf\MysqlConnection\Factory\ConnectionFactory(new \React\MySQL\Factory());
 $connection = $factory->createConnection('localhost:3306');
 
 $connection
@@ -57,7 +57,7 @@ The main role of factory - creating `ConnectionInterface`, by wrapping [`Factory
 Create connection using [lazy connection](https://github.com/friends-of-reactphp/mysql#createlazyconnection) for future operations.
 
 ```php
-$factory = new Nstwf\MysqlConnection\Factory\ConnectionFactory(new React\MySQL\Factory());
+$factory = new \Nstwf\MysqlConnection\Factory\ConnectionFactory(new \React\MySQL\Factory());
 $connection = $factory->createConnection('localhost:3306');
 ```
 
@@ -89,14 +89,14 @@ $connection
     });
 ```
 
-This is equals to:
+Equals to:
 
 ```php
 $connection
     ->query("BEGIN")
     ->then(
         fn() => $connection->query("COMMIT"),
-        function (Throwable $throwable) use ($connection)  {
+        function (\Throwable $throwable) use ($connection)  {
         return $connection->query("ROLLBACK")
                           ->then(fn() => $throwable);
         }
@@ -117,7 +117,7 @@ $connection
     });
 ```
 
-This is equals to:
+Equals to:
 
 > Sql case-insensitive
 
@@ -141,9 +141,9 @@ $connection
     });
 ```
 
-This is equals to:
+Equals to:
 
-> Sql case-insensitive
+> sql case-insensitive
 
 ```php
 $connection->query("COMMIT");
@@ -163,7 +163,7 @@ $connection
     });
 ```
 
-This is equals to:
+Equals to:
 
 > Sql case-insensitive
 
@@ -217,3 +217,5 @@ vendor/bin/phpunit
 ## License
 
 MIT, see [LICENSE file](LICENSE).
+
+- [friends-of-reactphp/mysql](https://github.com/friends-of-reactphp/mysql) - main project
