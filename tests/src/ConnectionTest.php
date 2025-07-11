@@ -9,8 +9,6 @@ namespace Nstwf\MysqlConnection;
 
 use Nstwf\MysqlConnection\Transaction\State;
 use PHPUnit\Framework\TestCase;
-
-
 use function React\Promise\reject;
 use function React\Promise\resolve;
 
@@ -39,9 +37,9 @@ class ConnectionTest extends TestCase
     private function beginDataProvider(): array
     {
         return [
-            '"begin" method'                           => [fn(ConnectionInterface $connection) => $connection->begin()],
-            'query with lowercase "begin"'             => [fn(ConnectionInterface $connection) => $connection->query('begin')],
-            'query with uppercase "BEGIN"'             => [fn(ConnectionInterface $connection) => $connection->query('BEGIN')],
+            '"begin" method' => [fn(ConnectionInterface $connection) => $connection->begin()],
+            'query with lowercase "begin"' => [fn(ConnectionInterface $connection) => $connection->query('begin')],
+            'query with uppercase "BEGIN"' => [fn(ConnectionInterface $connection) => $connection->query('BEGIN')],
             'query with lowercase "start transaction"' => [fn(ConnectionInterface $connection) => $connection->query('start transaction')],
             'query with uppercase "START TRANSACTION"' => [fn(ConnectionInterface $connection) => $connection->query('START TRANSACTION')],
         ];
@@ -146,7 +144,7 @@ class ConnectionTest extends TestCase
     private function commitDataProvider(): array
     {
         return [
-            '"commit" method'               => [fn(ConnectionInterface $connection) => $connection->commit()],
+            '"commit" method' => [fn(ConnectionInterface $connection) => $connection->commit()],
             'query with lowercase "commit"' => [fn(ConnectionInterface $connection) => $connection->query('commit')],
             'query with uppercase "COMMIT"' => [fn(ConnectionInterface $connection) => $connection->query('COMMIT')],
         ];
@@ -218,7 +216,7 @@ class ConnectionTest extends TestCase
     private function rollbackDataProvider(): array
     {
         return [
-            '"rollback" method'               => [fn(ConnectionInterface $connection) => $connection->rollback()],
+            '"rollback" method' => [fn(ConnectionInterface $connection) => $connection->rollback()],
             'query with lowercase "rollback"' => [fn(ConnectionInterface $connection) => $connection->query('rollback')],
             'query with uppercase "ROLLBACK"' => [fn(ConnectionInterface $connection) => $connection->query('ROLLBACK')],
         ];

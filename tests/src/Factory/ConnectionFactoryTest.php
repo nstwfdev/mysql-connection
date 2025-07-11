@@ -10,9 +10,6 @@ use React\MySQL\ConnectionInterface;
 use React\MySQL\Factory;
 
 
-use function React\Promise\resolve;
-
-
 class ConnectionFactoryTest extends TestCase
 {
     public function testReturnBaseConnectionWithinTransactionalConnection()
