@@ -1,3 +1,31 @@
+## [1.2.2](https://github.com/nstwfdev/mysql-connection/compare/v1.2.1...v1.2.2) (2025-07-11)
+
+
+### Chore
+
+* tests typo ([c9e0e01](https://github.com/nstwfdev/mysql-connection/commit/c9e0e017202c33040d0ba3cd5df446cfa3ad6c20))
+
+### Docs
+
+* fix namespaces in examples ([2f25091](https://github.com/nstwfdev/mysql-connection/commit/2f250919949954be9e8339339e95d952a084f39f))
+
+### Fix
+
+* improve tests, add strict types ([df590e8](https://github.com/nstwfdev/mysql-connection/commit/df590e8af4bfb4cb7debd9b4c3eacf7cf6333830))
+
+### Upgrade
+
+* Bump actions/checkout from 3 to 4 ([67ffdee](https://github.com/nstwfdev/mysql-connection/commit/67ffdee8f592eb7335f89114287350ef492eeb36))
+* Bump cycjimmy/semantic-release-action from 3 to 4 ([f1ac451](https://github.com/nstwfdev/mysql-connection/commit/f1ac4514470245db51faac01e0bbf12f3cabf0d6))
+* Bump phpunit/phpunit from 9.5.27 to 9.6.3 ([82944b5](https://github.com/nstwfdev/mysql-connection/commit/82944b54dd3b9cf2d51e0e37c68bf99d2401b798))
+* Bump phpunit/phpunit from 9.6.10 to 9.6.11 ([b865f1f](https://github.com/nstwfdev/mysql-connection/commit/b865f1fab6aae072fc5024a587d21d5cae84b435))
+* Bump phpunit/phpunit from 9.6.3 to 9.6.4 ([3996f2e](https://github.com/nstwfdev/mysql-connection/commit/3996f2ee050f392977a33e29d0e13c26c108ff06))
+* Bump phpunit/phpunit from 9.6.4 to 9.6.5 ([419138e](https://github.com/nstwfdev/mysql-connection/commit/419138e89a084bbb50616619990ba66b17e8e362))
+* Bump phpunit/phpunit from 9.6.5 to 9.6.7 ([379d2f9](https://github.com/nstwfdev/mysql-connection/commit/379d2f930dbe5993664cbd52037b1e3b0f704012))
+* Bump phpunit/phpunit from 9.6.7 to 9.6.8 ([3c09c9d](https://github.com/nstwfdev/mysql-connection/commit/3c09c9ddd7cbcbaf8053f63c240c6ea22a0ef6e9))
+* Bump phpunit/phpunit from 9.6.8 to 9.6.9 ([7fa5162](https://github.com/nstwfdev/mysql-connection/commit/7fa516230827826549f4b68fc94e17aa6e894918))
+* Bump phpunit/phpunit from 9.6.9 to 9.6.10 ([261d290](https://github.com/nstwfdev/mysql-connection/commit/261d29094e19cae7a7f7a506cfd25b5155710d31))
+
 ## [1.2.1](https://github.com/nstwfdev/mysql-connection/compare/v1.2.0...v1.2.1) (2022-12-22)
 
 
