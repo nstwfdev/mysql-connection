@@ -3,8 +3,10 @@ declare(strict_types=1);
 
 namespace Nstwf\MysqlConnection;
 
+use Closure;
 use Exception;
 use Nstwf\MysqlConnection\Transaction\State;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use React\Promise\PromiseInterface;
 use ReflectionProperty;
@@ -14,10 +16,8 @@ use function React\Promise\resolve;
 
 class ConnectionTest extends TestCase
 {
-    /**
-     * @dataProvider beginDataProvider
-     */
-    public function testBeginWillChangeStateToActive(callable $callable): void
+    #[DataProvider('beginDataProvider')]
+    public function testBeginWillChangeStateToActive(Closure $callable): void
     {
         $baseConnection = $this->getMockBuilder(\React\MySQL\ConnectionInterface::class)->getMock();
         $baseConnection
@@ -77,23 +77,26 @@ class ConnectionTest extends TestCase
         $connection->begin();
     }
 
-    /**
-     * @dataProvider commitDataProvider
-     */
+    #[DataProvider('commitDataProvider')]
     public function testSuccessCommitWillChangeStateToIdle(callable $commitCallable): void
     {
         $baseConnection = $this->getMockBuilder(\React\MySQL\ConnectionInterface::class)->getMock();
         $baseConnection
             ->expects($this->exactly(2))
             ->method('query')
-            ->withConsecutive(
-                ['BEGIN'],
-                ['COMMIT']
-            )
-            ->willReturnOnConsecutiveCalls(
-                $this->createSuccessPromise(),
-                $this->createSuccessPromise()
-            );
+            ->willReturnCallback(function (string $sql) {
+                static $i = 0;
+                $expected = ['BEGIN', 'COMMIT'][$i] ?? null;
+                $i++;
+
+                $this->assertSame(
+                    $expected,
+                    $sql,
+                    sprintf("Expected query '%s', got '%s'", $expected, $sql)
+                );
+
+                return $this->createSuccessPromise();
+            });
 
         $connection = $this->createConnection($baseConnection);
 
@@ -123,14 +126,21 @@ class ConnectionTest extends TestCase
         $baseConnection
             ->expects($this->exactly(2))
             ->method('query')
-            ->withConsecutive(
-                ['BEGIN'],
-                ['COMMIT']
-            )
-            ->willReturnOnConsecutiveCalls(
-                $this->createSuccessPromise(),
-                reject(new Exception())
-            );
+            ->willReturnCallback(function (string $sql) {
+                static $i = 0;
+                $sequence = ['BEGIN', 'COMMIT'];
+                $expected = $sequence[$i] ?? null;
+                $i++;
+
+                if ($sql !== $expected) {
+                    $this->fail("Expected query '$expected', got '{$sql}'");
+                }
+
+                return $i === 1
+                    ? $this->createSuccessPromise()
+                    : $this->createErrorPromise();
+            });
+
 
         $connection = $this->createConnection($baseConnection);
 
@@ -140,7 +150,7 @@ class ConnectionTest extends TestCase
         $this->assertState($connection, State::IDLE);
     }
 
-    private function commitDataProvider(): array
+    public static function commitDataProvider(): array
     {
         return [
             '"commit" method' => [fn(ConnectionInterface $connection) => $connection->commit()],
@@ -149,23 +159,23 @@ class ConnectionTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider rollbackDataProvider
-     */
+    #[DataProvider('rollbackDataProvider')]
     public function testSuccessRollbackWillChangeStateToIdle(callable $rollbackCallable): void
     {
         $baseConnection = $this->getMockBuilder(\React\MySQL\ConnectionInterface::class)->getMock();
         $baseConnection
             ->expects($this->exactly(2))
             ->method('query')
-            ->withConsecutive(
-                ['BEGIN'],
-                ['ROLLBACK']
-            )
-            ->willReturnOnConsecutiveCalls(
-                $this->createSuccessPromise(),
-                $this->createSuccessPromise()
-            );
+            ->willReturnCallback(function (string $sqlCalled) {
+                static $i = 0;
+                $sequence = ['BEGIN', 'ROLLBACK'];
+                $expected = $sequence[$i] ?? null;
+                $i++;
+
+                $this->assertSame($expected, $sqlCalled);
+
+                return $this->createSuccessPromise();
+            });
 
         $connection = $this->createConnection($baseConnection);
 
@@ -195,14 +205,21 @@ class ConnectionTest extends TestCase
         $baseConnection
             ->expects($this->exactly(2))
             ->method('query')
-            ->withConsecutive(
-                ['BEGIN'],
-                ['ROLLBACK']
-            )
-            ->willReturnOnConsecutiveCalls(
-                $this->createSuccessPromise(),
-                $this->createErrorPromise()
-            );
+            ->willReturnCallback(function (string $sql) {
+                static $i = 0;
+                $expected = ['BEGIN', 'ROLLBACK'][$i] ?? null;
+                $i++;
+
+                $this->assertSame(
+                    $expected,
+                    $sql,
+                    sprintf("Expected query '%s', got '%s'", $expected, $sql)
+                );
+
+                return $i === 1
+                    ? $this->createSuccessPromise()
+                    : $this->createErrorPromise();
+            });
 
         $connection = $this->createConnection($baseConnection);
 
@@ -212,7 +229,7 @@ class ConnectionTest extends TestCase
         $this->assertState($connection, State::IDLE);
     }
 
-    private function rollbackDataProvider(): array
+    public static function rollbackDataProvider(): array
     {
         return [
             '"rollback" method' => [fn(ConnectionInterface $connection) => $connection->rollback()],
@@ -229,16 +246,16 @@ class ConnectionTest extends TestCase
         $baseConnection
             ->expects($this->exactly(3))
             ->method('query')
-            ->withConsecutive(
-                ['BEGIN'],
-                [$sql],
-                ['COMMIT']
-            )
-            ->willReturnOnConsecutiveCalls(
-                $this->createSuccessPromise(),
-                $this->createSuccessPromise(),
-                $this->createSuccessPromise(),
-            );
+            ->willReturnCallback(function (string $sqlCalled) use ($sql) {
+                static $i = 0;
+                $sequence = ['BEGIN', $sql, 'COMMIT'];
+                $expected = $sequence[$i] ?? null;
+                $i++;
+
+                $this->assertSame($expected, $sqlCalled);
+
+                return $this->createSuccessPromise();
+            });
 
         $connection = $this->createConnection($baseConnection);
 
@@ -258,16 +275,18 @@ class ConnectionTest extends TestCase
         $baseConnection
             ->expects($this->exactly(3))
             ->method('query')
-            ->withConsecutive(
-                ['BEGIN'],
-                [$sql],
-                ['ROLLBACK']
-            )
-            ->willReturnOnConsecutiveCalls(
-                $this->createSuccessPromise(),
-                reject($exception),
-                $this->createSuccessPromise(),
-            );
+            ->willReturnCallback(function (string $sqlCalled) use ($sql, $exception) {
+                static $i = 0;
+                $sequence = ['BEGIN', $sql, 'ROLLBACK'];
+                $expected = $sequence[$i] ?? null;
+                $i++;
+
+                $this->assertSame($expected, $sqlCalled);
+
+                return $i === 2
+                    ? reject($exception)
+                    : $this->createSuccessPromise();
+            });
 
         $connection = $this->createConnection($baseConnection);
 
