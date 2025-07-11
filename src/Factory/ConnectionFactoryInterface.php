@@ -1,11 +1,7 @@
 <?php
-
-
 declare(strict_types=1);
 
-
 namespace Nstwf\MysqlConnection\Factory;
-
 
 use Nstwf\MysqlConnection\ConnectionInterface;
 

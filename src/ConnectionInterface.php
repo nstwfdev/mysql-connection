@@ -1,12 +1,9 @@
 <?php
-
-
 declare(strict_types=1);
-
 
 namespace Nstwf\MysqlConnection;
 
-
+use Nstwf\MysqlConnection\Exception\ActiveTransactionsExistException;
 use React\Promise\PromiseInterface;
 
 
@@ -27,7 +24,6 @@ interface ConnectionInterface
      * @param callable $callable
      *
      * @return PromiseInterface
-     * @throws \Exception
      */
     public function transaction(callable $callable): PromiseInterface;
 
@@ -42,7 +38,7 @@ interface ConnectionInterface
      * ```
      *
      * @return PromiseInterface
-     * @throws \Exception
+     * @throws ActiveTransactionsExistException
      */
     public function begin(): PromiseInterface;
 
@@ -56,7 +52,6 @@ interface ConnectionInterface
      * ```
      *
      * @return PromiseInterface
-     * @throws \Exception
      */
     public function commit(): PromiseInterface;
 
@@ -70,7 +65,6 @@ interface ConnectionInterface
      * ```
      *
      * @return PromiseInterface
-     * @throws \Exception
      */
     public function rollback(): PromiseInterface;
 

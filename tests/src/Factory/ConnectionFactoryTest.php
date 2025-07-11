@@ -1,8 +1,7 @@
 <?php
-
+declare(strict_types=1);
 
 namespace Nstwf\MysqlConnection\Factory;
-
 
 use Nstwf\MysqlConnection\Connection;
 use PHPUnit\Framework\TestCase;
@@ -12,7 +11,7 @@ use React\MySQL\Factory;
 
 class ConnectionFactoryTest extends TestCase
 {
-    public function testReturnBaseConnectionWithinTransactionalConnection()
+    public function testReturnBaseConnectionWithinTransactionalConnection(): void
     {
         $uri = 'localhost:3306';
 

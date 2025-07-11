@@ -1,17 +1,13 @@
 <?php
-
-
 declare(strict_types=1);
-
 
 namespace Nstwf\MysqlConnection;
 
-
+use Nstwf\MysqlConnection\Exception\ActiveTransactionsExistException;
 use Nstwf\MysqlConnection\Transaction\State;
 use React\MySQL\ConnectionInterface as BaseConnectionInterface;
 use React\Promise\PromiseInterface;
-
-
+use Throwable;
 use function React\Promise\reject;
 use function React\Promise\resolve;
 
@@ -21,17 +17,22 @@ final class Connection implements ConnectionInterface
     private State $state = State::IDLE;
 
     public function __construct(
-        private BaseConnectionInterface $connection
-    ) {
+        private readonly BaseConnectionInterface $connection
+    )
+    {
     }
 
     public function transaction(callable $callable): PromiseInterface
     {
         return $this
             ->begin()
-            ->then(fn() => $callable($this))
-            ->then(fn() => $this->commit())
-            ->otherwise(function ($error) {
+            ->then(function () use ($callable) {
+                return $callable($this);
+            })
+            ->then(function () {
+                return $this->commit();
+            })
+            ->otherwise(function (Throwable $error) {
                 return $this
                     ->rollback()
                     ->then(fn() => reject($error));
@@ -41,7 +42,7 @@ final class Connection implements ConnectionInterface
     public function begin(): PromiseInterface
     {
         if ($this->state === State::ACTIVE) {
-            throw new \Exception("Already have active transaction");
+            throw new ActiveTransactionsExistException("Already have active transaction");
         }
 
         $this->state = State::ACTIVE;
@@ -49,7 +50,7 @@ final class Connection implements ConnectionInterface
         return $this
             ->connection
             ->query("BEGIN")
-            ->otherwise(function () {
+            ->catch(function () {
                 $this->state = State::IDLE;
             });
     }
@@ -57,13 +58,13 @@ final class Connection implements ConnectionInterface
     public function commit(): PromiseInterface
     {
         if ($this->state !== State::ACTIVE) {
-            return resolve();
+            return resolve(null);
         }
 
         return $this
             ->connection
             ->query("COMMIT")
-            ->always(function () {
+            ->finally(function () {
                 $this->state = State::IDLE;
             });
     }
@@ -71,11 +72,12 @@ final class Connection implements ConnectionInterface
     public function rollback(): PromiseInterface
     {
         if ($this->state !== State::ACTIVE) {
-            return resolve();
+            return resolve(null);
         }
 
-        return $this->connection->query("ROLLBACK")
-            ->always(function () {
+        return $this->connection
+            ->query("ROLLBACK")
+            ->finally(function () {
                 $this->state = State::IDLE;
             });
     }
@@ -124,7 +126,7 @@ final class Connection implements ConnectionInterface
     {
         return in_array(
             strtoupper($sql),
-            array_map(fn(string $query) => strtoupper($query), $queries)
+            array_map(static fn(string $query) => strtoupper($query), $queries),
         );
     }
 }

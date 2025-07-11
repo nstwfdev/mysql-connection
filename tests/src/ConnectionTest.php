@@ -1,14 +1,13 @@
 <?php
-
-
 declare(strict_types=1);
-
 
 namespace Nstwf\MysqlConnection;
 
-
+use Exception;
 use Nstwf\MysqlConnection\Transaction\State;
 use PHPUnit\Framework\TestCase;
+use React\Promise\PromiseInterface;
+use ReflectionProperty;
 use function React\Promise\reject;
 use function React\Promise\resolve;
 
@@ -18,14 +17,14 @@ class ConnectionTest extends TestCase
     /**
      * @dataProvider beginDataProvider
      */
-    public function testBeginWillChangeStateToActive(callable $callable)
+    public function testBeginWillChangeStateToActive(callable $callable): void
     {
         $baseConnection = $this->getMockBuilder(\React\MySQL\ConnectionInterface::class)->getMock();
         $baseConnection
             ->expects($this->once())
             ->method('query')
             ->with('BEGIN')
-            ->willReturn(resolve());
+            ->willReturn($this->createSuccessPromise());
 
         $connection = $this->createConnection($baseConnection);
 
@@ -34,7 +33,7 @@ class ConnectionTest extends TestCase
         $this->assertState($connection, State::ACTIVE);
     }
 
-    private function beginDataProvider(): array
+    public static function beginDataProvider(): array
     {
         return [
             '"begin" method' => [fn(ConnectionInterface $connection) => $connection->begin()],
@@ -45,14 +44,14 @@ class ConnectionTest extends TestCase
         ];
     }
 
-    public function testBeginWithExceptionChangeStateToIdle()
+    public function testBeginWithExceptionChangeStateToIdle(): void
     {
         $baseConnection = $this->getMockBuilder(\React\MySQL\ConnectionInterface::class)->getMock();
         $baseConnection
             ->expects($this->once())
             ->method('query')
             ->with('BEGIN')
-            ->willReturn(reject());
+            ->willReturn($this->createErrorPromise());
 
         $connection = $this->createConnection($baseConnection);
 
@@ -61,27 +60,27 @@ class ConnectionTest extends TestCase
         $this->assertState($connection, State::IDLE);
     }
 
-    public function testBeginTwiceWillThrowException()
+    public function testBeginTwiceWillThrowException(): void
     {
         $baseConnection = $this->getMockBuilder(\React\MySQL\ConnectionInterface::class)->getMock();
         $baseConnection
             ->expects($this->once())
             ->method('query')
             ->with('BEGIN')
-            ->willReturn(resolve());
+            ->willReturn($this->createSuccessPromise());
 
         $connection = $this->createConnection($baseConnection);
 
         $connection->begin();
 
-        $this->expectException(\Exception::class);
+        $this->expectException(Exception::class);
         $connection->begin();
     }
 
     /**
      * @dataProvider commitDataProvider
      */
-    public function testSuccessCommitWillChangeStateToIdle(callable $commitCallable)
+    public function testSuccessCommitWillChangeStateToIdle(callable $commitCallable): void
     {
         $baseConnection = $this->getMockBuilder(\React\MySQL\ConnectionInterface::class)->getMock();
         $baseConnection
@@ -92,8 +91,8 @@ class ConnectionTest extends TestCase
                 ['COMMIT']
             )
             ->willReturnOnConsecutiveCalls(
-                resolve(),
-                resolve()
+                $this->createSuccessPromise(),
+                $this->createSuccessPromise()
             );
 
         $connection = $this->createConnection($baseConnection);
@@ -104,7 +103,7 @@ class ConnectionTest extends TestCase
         $this->assertState($connection, State::IDLE);
     }
 
-    public function testCommitWithoutBeginWillDoNothing()
+    public function testCommitWithoutBeginWillDoNothing(): void
     {
         $baseConnection = $this->getMockBuilder(\React\MySQL\ConnectionInterface::class)->getMock();
         $baseConnection
@@ -118,7 +117,7 @@ class ConnectionTest extends TestCase
         $this->assertState($connection, State::IDLE);
     }
 
-    public function testCommitWithExceptionWillChangeStateToIdle()
+    public function testCommitWithExceptionWillChangeStateToIdle(): void
     {
         $baseConnection = $this->getMockBuilder(\React\MySQL\ConnectionInterface::class)->getMock();
         $baseConnection
@@ -129,8 +128,8 @@ class ConnectionTest extends TestCase
                 ['COMMIT']
             )
             ->willReturnOnConsecutiveCalls(
-                resolve(),
-                reject()
+                $this->createSuccessPromise(),
+                reject(new Exception())
             );
 
         $connection = $this->createConnection($baseConnection);
@@ -153,7 +152,7 @@ class ConnectionTest extends TestCase
     /**
      * @dataProvider rollbackDataProvider
      */
-    public function testSuccessRollbackWillChangeStateToIdle(callable $rollbackCallable)
+    public function testSuccessRollbackWillChangeStateToIdle(callable $rollbackCallable): void
     {
         $baseConnection = $this->getMockBuilder(\React\MySQL\ConnectionInterface::class)->getMock();
         $baseConnection
@@ -164,8 +163,8 @@ class ConnectionTest extends TestCase
                 ['ROLLBACK']
             )
             ->willReturnOnConsecutiveCalls(
-                resolve(),
-                resolve()
+                $this->createSuccessPromise(),
+                $this->createSuccessPromise()
             );
 
         $connection = $this->createConnection($baseConnection);
@@ -176,7 +175,7 @@ class ConnectionTest extends TestCase
         $this->assertState($connection, State::IDLE);
     }
 
-    public function testRollbackWithoutBeginWillDoNothing()
+    public function testRollbackWithoutBeginWillDoNothing(): void
     {
         $baseConnection = $this->getMockBuilder(\React\MySQL\ConnectionInterface::class)->getMock();
         $baseConnection
@@ -190,7 +189,7 @@ class ConnectionTest extends TestCase
         $this->assertState($connection, State::IDLE);
     }
 
-    public function testRollbackWithExceptionWillChangeStateToIdle()
+    public function testRollbackWithExceptionWillChangeStateToIdle(): void
     {
         $baseConnection = $this->getMockBuilder(\React\MySQL\ConnectionInterface::class)->getMock();
         $baseConnection
@@ -201,8 +200,8 @@ class ConnectionTest extends TestCase
                 ['ROLLBACK']
             )
             ->willReturnOnConsecutiveCalls(
-                resolve(),
-                reject()
+                $this->createSuccessPromise(),
+                $this->createErrorPromise()
             );
 
         $connection = $this->createConnection($baseConnection);
@@ -222,7 +221,7 @@ class ConnectionTest extends TestCase
         ];
     }
 
-    public function testSuccessTransaction()
+    public function testSuccessTransaction(): void
     {
         $sql = 'update users set name = "Tim" where id = 3';
 
@@ -236,9 +235,9 @@ class ConnectionTest extends TestCase
                 ['COMMIT']
             )
             ->willReturnOnConsecutiveCalls(
-                resolve(),
-                resolve(),
-                resolve(),
+                $this->createSuccessPromise(),
+                $this->createSuccessPromise(),
+                $this->createSuccessPromise(),
             );
 
         $connection = $this->createConnection($baseConnection);
@@ -250,10 +249,10 @@ class ConnectionTest extends TestCase
         $this->assertState($connection, State::IDLE);
     }
 
-    public function testErrorTransaction()
+    public function testErrorTransaction(): void
     {
         $sql = 'update users set name = "Tim" where id = 3';
-        $exception = new \Exception('Error message');
+        $exception = new Exception('Error message');
 
         $baseConnection = $this->getMockBuilder(\React\MySQL\ConnectionInterface::class)->getMock();
         $baseConnection
@@ -265,22 +264,20 @@ class ConnectionTest extends TestCase
                 ['ROLLBACK']
             )
             ->willReturnOnConsecutiveCalls(
-                resolve(),
+                $this->createSuccessPromise(),
                 reject($exception),
-                resolve(),
+                $this->createSuccessPromise(),
             );
 
         $connection = $this->createConnection($baseConnection);
 
-        $promise = $connection->transaction(function (ConnectionInterface $connection) use ($sql) {
-            return $connection->query($sql);
-        });
+        $promise = $connection->transaction(fn(ConnectionInterface $connection) => $connection->query($sql));
 
         $this->assertState($connection, State::IDLE);
         $this->assertEquals(reject($exception), $promise);
     }
 
-    public function testQueryActuallyCallQuery()
+    public function testQueryActuallyCallQuery(): void
     {
         $sql = 'update users set name = "Tim" where id = 3';
 
@@ -289,27 +286,27 @@ class ConnectionTest extends TestCase
             ->expects($this->once())
             ->method('query')
             ->with()
-            ->willReturn(resolve());
+            ->willReturn($this->createSuccessPromise());
 
         $connection = $this->createConnection($baseConnection);
 
         $connection->query($sql);
     }
 
-    public function testPingActuallyCallPing()
+    public function testPingActuallyCallPing(): void
     {
         $baseConnection = $this->getMockBuilder(\React\MySQL\ConnectionInterface::class)->getMock();
         $baseConnection
             ->expects($this->once())
             ->method('ping')
-            ->willReturn(resolve());
+            ->willReturn($this->createSuccessPromise());
 
         $connection = $this->createConnection($baseConnection);
 
         $connection->ping();
     }
 
-    public function testCloseActuallyCallClose()
+    public function testCloseActuallyCallClose(): void
     {
         $baseConnection = $this->getMockBuilder(\React\MySQL\ConnectionInterface::class)->getMock();
         $baseConnection
@@ -321,17 +318,27 @@ class ConnectionTest extends TestCase
         $connection->close();
     }
 
-    public function testQuitActuallyCallClose()
+    public function testQuitActuallyCallClose(): void
     {
         $baseConnection = $this->getMockBuilder(\React\MySQL\ConnectionInterface::class)->getMock();
         $baseConnection
             ->expects($this->once())
             ->method('quit')
-            ->willReturn(resolve());
+            ->willReturn($this->createSuccessPromise());
 
         $connection = $this->createConnection($baseConnection);
 
         $connection->quit();
+    }
+
+    private function createSuccessPromise(): PromiseInterface
+    {
+        return resolve(null);
+    }
+
+    private function createErrorPromise(string $error = 'Error'): PromiseInterface
+    {
+        return reject(new Exception($error));
     }
 
     private function createConnection(\React\MySQL\ConnectionInterface $connection): ConnectionInterface
@@ -341,7 +348,7 @@ class ConnectionTest extends TestCase
 
     private function assertState(ConnectionInterface $connection, State $expectedState): void
     {
-        $state = new \ReflectionProperty(Connection::class, 'state');
+        $state = new ReflectionProperty(Connection::class, 'state');
         $this->assertEquals($expectedState, $state->getValue($connection));
     }
 }
