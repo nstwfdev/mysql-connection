@@ -32,7 +32,7 @@ jobs:
       - run: php vendor/bin/phpunit --configuration phpunit.xml --coverage-clover ./coverage.xml
 
       - name: Upload to Codecov
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODE_COV_TOKEN }}
           files: ./coverage.xml
